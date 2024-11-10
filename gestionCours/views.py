@@ -179,7 +179,7 @@ def delete_chapitre(request, chapter_id):
     return render(request, 'cours/delete_chapitre.html', {'chapitre': chapitre})
 
 
-os.environ["GEMINI_API_KEY"] = "AIzaSyCrf5J9HRqb5D5hJMU1Yz7Z5JvvgjTZ38U"
+os.environ["GEMINI_API_KEY"] = ""
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 def summarize_pdf(request, chapter_id):
