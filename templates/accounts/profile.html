@@ -1,0 +1,101 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Settings {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+</div>
+
+<div class="row">
+    <div >
+        <div class="card card-body border-0 shadow mb-4">
+            <h2 class="h5 mb-4">Informations générales</h2>
+
+            <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+
+
+                <div class="text-center mb-4">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle border border-primary" width="150" height="150">
+                    {% else %}
+                    <img src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-login-form/draw2.png" alt="Avatar" class="rounded-circle border border-secondary" width="150" height="150">
+                    {% endif %}
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="file" class="form-control" id="avatar" name="avatar">
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="name">Nom</label>
+                        <input type="text" id="name" name="name" class="form-control" value="{{ user.username }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" readonly>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="diplomes">Diplômes</label>
+                        <input type="text" id="diplomes" name="diplomes" class="form-control" value="{{ user.diplomes }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="experience">Expérience</label>
+                        <select id="experience" name="experience" class="form-control">
+                            <option value="" disabled>Choisissez votre expérience</option>
+                            <option value="Débutant" {% if user.experience == 'Débutant' %}selected{% endif %}>Débutant</option>
+                            <option value="Intermédiaire" {% if user.experience == 'Intermédiaire' %}selected{% endif %}>Intermédiaire</option>
+                            <option value="Avancé" {% if user.experience == 'Avancé' %}selected{% endif %}>Avancé</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="about">À propos</label>
+                    <textarea id="about" name="about" class="form-control">{{ user.about }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="specialite">Spécialité</label>
+                    <select id="specialite" class="form-control" name="specialite">
+                        <option value="" disabled selected>Choisissez une spécialité</option>
+                        <option value="Développement Web" {% if user.specialite == 'Développement Web' %}selected{% endif %}>Développement Web</option>
+                        <option value="Développement Mobile" {% if user.specialite == 'Développement Mobile' %}selected{% endif %}>Développement Mobile</option>
+                        <option value="Développement Logiciel" {% if user.specialite == 'Développement Logiciel' %}selected{% endif %}>Développement Logiciel</option>
+                        <option value="Développement Jeux Vidéo" {% if user.specialite == 'Développement Jeux Vidéo' %}selected{% endif %}>Développement Jeux Vidéo</option>
+                        <option value="Développement Réseau" {% if user.specialite == 'Développement Réseau' %}selected{% endif %}>Développement Réseau</option>
+                        <option value="Développement Système" {% if user.specialite == 'Développement Système' %}selected{% endif %}>Développement Système</option>
+                        <option value="Développement Embarqué" {% if user.specialite == 'Développement Embarqué' %}selected{% endif %}>Développement Embarqué</option>
+                        <option value="Développement IA" {% if user.specialite == 'Développement IA' %}selected{% endif %}>Développement IA</option>
+                        <option value="Développement IoT" {% if user.specialite == 'Développement IoT' %}selected{% endif %}>Développement IoT</option>
+                        <option value="Développement Cloud" {% if user.specialite == 'Développement Cloud' %}selected{% endif %}>Développement Cloud</option>
+                        <option value="Développement Big Data" {% if user.specialite == 'Développement Big Data' %}selected{% endif %}>Développement Big Data</option>
+                        <option value="Développement Blockchain" {% if user.specialite == 'Développement Blockchain' %}selected{% endif %}>Développement Blockchain</option>
+                        <option value="Développement Sécurité" {% if user.specialite == 'Développement Sécurité' %}selected{% endif %}>Développement Sécurité</option>
+                        <option value="Développement DevOps" {% if user.specialite == 'Développement DevOps' %}selected{% endif %}>Développement DevOps</option>
+                        <option value="Développement Autre" {% if user.specialite == 'Développement Autre' %}selected{% endif %}>Développement Autre</option>
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

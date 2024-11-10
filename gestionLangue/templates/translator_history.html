@@ -1,0 +1,160 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Translation History {% endblock %} 
+
+{% block stylesheets %}
+<!-- Bootstrap CSS -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .audio-cell {
+        width: 200px;  /* Adjust width as needed */
+        white-space: nowrap;  /* Prevent text from wrapping */
+        overflow: hidden;  /* Hide overflowing content */
+        text-overflow: clip;  /* Disable ellipsis */
+    }
+    h1 {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 2.5em;
+        color: #343a40;
+    }
+
+
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid #dee2e6;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    audio {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    table {
+        width: 100%;  /* Make the table full width */
+        border-collapse: collapse;  /* Collapse borders for a cleaner look */
+    }
+
+    th, td {
+        padding: 10px;  /* Add some padding for better spacing */
+        text-align: left;  /* Align text to the left */
+        border: 1px solid #ddd;  /* Add a light border */
+    }
+
+    .audio-cell {
+        width: 250px;  /* Adjust this width as needed for the audio controls */
+        white-space: nowrap;  /* Prevent text from wrapping */
+        overflow: hidden;  /* Hide overflowing content */
+        text-overflow: clip;
+  /* Disable ellipsis */
+    }
+
+    button.btn-danger {
+        margin: 0;  /* Adjust button margin if needed */
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<body>
+    <h1>Translation History</h1>
+    <div class="container">
+        <table class="table table-striped table-bordered">
+            <thead >
+                <tr>
+                    <th style="color: #343a40;">Input Text</th>
+                    <th style="color: #343a40;">Input Voice</th>
+                    <th style="color: #343a40;">Output Text</th>
+                    <th style="color: #343a40;">Output Voice</th>
+                    <th style="color: #343a40;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for input_translation in input_translations %}
+                    <tr>
+                        <td>{{ input_translation.input_text }}</td>
+                        <td class="audio-cell">  <!-- Add the class here -->
+                            {% if input_translation.input_voice %}
+                                <audio controls>
+                                    <source src="{{ input_translation.input_voice.url }}" type="audio/mpeg">
+                                    Your browser does not support the audio tag.
+                                </audio>
+                            {% else %}
+                                No audio available
+                            {% endif %}
+                        </td>
+                        {% for output_translation in input_translation.outputtranslator_set.all %}
+                            <td>{{ output_translation.output_text }}</td>
+                            <td class="audio-cell">  <!-- Add the class here -->
+                                {% if output_translation.output_voice %}
+                                    <audio controls>
+                                        <source src="{{ output_translation.output_voice.url }}" type="audio/mpeg">
+                                        Your browser does not support the audio tag.
+                                    </audio>
+                                {% else %}
+                                    No audio available
+                                {% endif %}
+                            </td>
+                            <td>{{ input_translation.created_at }}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteTranslation({{ input_translation.id }})">Delete</button>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No translations found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            
+            
+        </table>
+    </div>
+</body>
+
+<script>
+    function deleteTranslation(id) {
+        if (confirm("Are you sure you want to delete this translation?")) {
+            fetch(`/translations/${id}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token if needed
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page or remove the row from the table
+                    location.reload(); // Simple reload
+                } else {
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+</script>
+
+{% endblock content %}
+
+{% block javascripts %}
+<!-- Bootstrap JS (optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock javascripts %}

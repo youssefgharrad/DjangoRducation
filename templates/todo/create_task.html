@@ -1,0 +1,39 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4 text-center">Ajouter une Nouvelle Tâche</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success">Enregistrer</button>
+                            <a href="{% url 'user_todo_list' %}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<style>
+    .card {
+        border-radius: 8px; /* Arrondir les coins de la carte */
+    }
+    
+    .card-body {
+        padding: 2rem; /* Ajouter un peu plus d'espace à l'intérieur de la carte */
+    }
+    
+    .btn {
+        width: 48%; /* Ajuster la largeur des boutons */
+    }
+    
+</style>

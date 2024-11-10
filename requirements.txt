@@ -1,0 +1,54 @@
+# Core Django dependencies
+django==4.2.5            # Adjust to match your Django version
+djangorestframework==3.14.0  # For REST API support, optional
+
+# Database connectors (choose the one that fits your database)
+psycopg2-binary==2.9.7   # For PostgreSQL
+mysqlclient==2.1.1       # For MySQL, if applicable
+pyodbc==4.0.35           # For SQL Server, if applicable
+
+# Additional dependencies
+django-anymail==10.1     # For email handling
+pillow==9.5.0            # For image handling
+requests==2.31.0         # For making HTTP requests (often used)
+
+# If your project uses any of these, adjust or add accordingly
+gunicorn==21.0.1         # For deployment in production
+whitenoise==6.4.0        # For serving static files in production
+
+defusedxml~=0.7.1
+ipython~=8.2.0
+numpy~=1.21.5
+future~=0.18.2
+zlib~=1.2.12
+olefile~=0.46
+jupyter~=1.0.0
+pip~=21.2.4
+pathlib~=1.0.1
+panel~=0.13.0
+dataclasses~=0.8
+attrs~=21.4.0
+wheel~=0.37.1
+pysocks~=1.7.1
+protobuf~=5.28.3
+openssl~=1.1.1n
+pyopenssl~=21.0.0
+cryptography~=3.4.8
+docutils~=0.17.1
+sphinx~=4.4.0
+filelock~=3.16.1
+asgiref~=3.8.1
+sqlparse~=0.5.1
+colorama~=0.4.4
+yaml~=0.2.5
+pyyaml~=6.0
+jinja2~=2.11.3
+tblib~=1.7.0
+boto3~=1.21.32
+botocore~=1.24.32
+certifi~=2021.10.8
+urllib3~=1.26.9
+idna~=3.3
+charset-normalizer~=2.0.4
+chardet~=4.0.0
+async-timeout~=4.0.1

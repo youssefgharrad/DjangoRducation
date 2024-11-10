@@ -1,0 +1,105 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Update Course{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 600px;  /* Adjust width as needed */
+        margin: 0 auto;    /* Center the form */
+        padding: 20px;     /* Add some padding */
+        border: 1px solid #ccc;  /* Add border */
+        border-radius: 10px;     /* Rounded corners */
+        background-color: #f9f9f9; /* Light background */
+    }
+
+    .form-group {
+        margin-bottom: 20px; /* Space between fields */
+    }
+
+    .form-group label {
+        font-weight: bold;    /* Bold labels */
+    }
+
+    .form-control {
+        width: 100%;          /* Full width */
+        padding: 10px;       /* Padding for inputs */
+        border-radius: 5px;  /* Rounded inputs */
+        border: 1px solid #ccc; /* Light border */
+        transition: border-color 0.2s; /* Smooth border transition */
+    }
+
+    .form-control:focus {
+        border-color: #007bff; /* Change border color on focus */
+        outline: none;         /* Remove default outline */
+    }
+
+    .btn-success {
+        background-color: #28a745; /* Green button */
+        color: white;             /* White text */
+        padding: 10px 20px;      /* Button padding */
+        border: none;             /* No border */
+        border-radius: 5px;      /* Rounded button */
+        cursor: pointer;          /* Pointer cursor */
+    }
+
+    .btn-success:hover {
+        background-color: #218838; /* Darker green on hover */
+    }
+
+    .text-center img {
+        max-width: 100%;       /* Responsive image */
+        height: auto;          /* Maintain aspect ratio */
+    }
+</style>
+
+<div class="container mt-4 form-container">
+    <h2 class="text-center mb-4">Update Course: {{ course.title }}</h2>
+    
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            {{ form.title.label_tag }}
+            {{ form.title }}  <!-- Keep this if you have the add_class filter -->
+        </div>
+
+        <div class="form-group">
+            {{ form.niveau.label_tag }}
+            {{ form.niveau }}
+        </div>
+
+        <div class="form-group">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+
+        <div class="form-group">
+            {{ form.specialites.label_tag }}
+            {{ form.specialites }}
+        </div>
+
+        <div class="text-center mb-4">
+            {% if course.image %}
+                <img src="{{ course.image.url }}" alt="Course Image" class="img-fluid">
+            {% else %}
+                <img src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-login-form/draw2.png" alt="Default Image" class="rounded-circle border border-secondary" width="150" height="150">
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.image.label_tag }}
+            {{ form.image }}
+        </div>
+
+        <div class="form-group">
+            {{ form.user.label_tag }}
+            {{ form.user }}
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success btn-lg">Update Course</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

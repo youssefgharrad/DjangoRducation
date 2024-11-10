@@ -1,0 +1,9 @@
+<!-- quiz_result.html -->
+{% extends "layouts/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Quiz Completed!</h2>
+    <p>Your Score: {{ score }}%</p>
+    <a href="{% url 'quiz_list' %}" class="btn btn-primary">Back to Quizzes</a>
+</div>
+{% endblock %}

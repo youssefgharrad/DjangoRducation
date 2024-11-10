@@ -1,0 +1,51 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<style>
+    /* Titre principal */
+    .recommended-title {
+        font-size: 2.5rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: bold;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+</style>
+<h1 class="recommended-title">Cours Recommandés</h1>
+
+{% if recommended_courses %}
+<div class="course-list-container" style="margin-top: 30px;">
+    <div class="row">
+        {% for course in recommended_courses %}
+        <div class="col-md-2 mb-4">
+            <div class="card h-100 position-relative">
+                <p class="course-title">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" class="card-img-top" style="width:400px;height: 200px" alt="Course Image">
+                    {% else %}
+                    <img src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-login-form/draw2.png" alt="Default Image" class="card-img-top">
+                    {% endif %}
+                </p>
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description }}</p>
+                </div>
+                <div class="card-footer text-muted">
+                    <div class="d-flex justify-content-between">
+                        {% if course.already_participated %}
+                        <button class="btn btn-secondary  m-3 text-white w-80" style="width: 60%; text-align: center;" disabled>Participé</button>
+                        {% else %}
+                        <a href="{% url 'participer_cours' course.id %}" class="btn btn-secondary  m-3 text-white w-50" style="width: 35%; text-align: center;">Participé</a>
+                        {% endif %}
+                        <a href="{% url 'courses_selectionner' course.id %}" class="btn btn-primary  m-3 text-white w-50" style="width: 35%; text-align: center;">Voir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<p class="no-course-message">Aucun cours recommandé trouvé pour votre spécialité et niveau.</p>
+{% endif %}
+{% endblock %}

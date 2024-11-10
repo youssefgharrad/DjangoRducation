@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Generate a New Quiz</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="course_id">Select Course:</label>
+        <select id="course_id" name="course_id" required>
+            {% for course in courses %}
+            <option value="{{ course.id }}">{{ course.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary mt-3">Generate Quiz</button>
+    </form>
+</div>
+{% endblock %}

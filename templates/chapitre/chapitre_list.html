@@ -1,0 +1,204 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ course.title }}</h2>
+    <div class="loader" id="loadingSpinner" style="display: none;"></div>
+
+
+    <!-- Show Add Chapter button only for Ensignat role -->
+    {% if user.is_authenticated and user.role == 'Enseignant' %}
+        <div style="max-width: fit-content; margin-left: auto;">
+            <a href="{% url 'add_chapitre' course.id %}" class="btn btn-primary mb-3"><i class="fa-solid fa-plus"></i> Chapitre </a>
+        </div>
+    {% endif %}
+
+    <!-- Chapter List -->
+    <div class="accordion" id="chapterAccordion">
+        {% for chapter in chapters %}
+            <div class="card" data-toggle="collapse" data-target="#collapse{{ chapter.id }}" aria-expanded="true" aria-controls="collapse{{ chapter.id }}">
+                <div class="card-header" id="heading{{ chapter.id }}">
+                    <h4 class="mb-0 d-flex align-items-center">
+                        <!-- Icon on the left -->
+                        <span class="me-2">
+                            <i class="fa-solid fa-book-open" style="font-size: 1.5em;"></i>
+                        </span>
+                
+                        <!-- Chapter Title -->
+                        <span class="flex-grow-1">{{ chapter.title }}</span>
+                
+                        <!-- View toggle icon -->
+                        {% if user.is_authenticated and user.role == 'Enseignant' %}
+                        <span>
+                            {% if chapter.viewChapitre %}
+                                <i class="fa-solid fa-eye" onclick="toggleView({{ chapter.id }}, false)" title="Mark as not viewed" style="cursor: pointer;"></i>
+                            {% else %}
+                                <i class="fa-solid fa-eye-slash" onclick="toggleView({{ chapter.id }}, true)" title="Mark as viewed" style="cursor: pointer;"></i>
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                    </h4>
+                    
+                    <p><strong>Description:</strong> {{ chapter.description }}</p>
+                
+                    
+                </div>
+                
+                
+
+                <div id="collapse{{ chapter.id }}" class="collapse" aria-labelledby="heading{{ chapter.id }}" data-parent="#chapterAccordion">
+                    <div class="card-body">
+                        {% if chapter.categorie %}
+                            <p><strong>Category:</strong> {{ chapter.categorie }}</p>
+                        {% endif %}
+                        {% if chapter.document %}
+                            <p><strong>Document <i class="fa-regular fa-file-pdf"></i>:</strong> 
+                                <a href="{{ chapter.document.url }}" target="_blank">Download <i class="fa-solid fa-file-arrow-down"></i></a>
+                                {% if user.is_authenticated and user.role == 'Etudiant' %}
+                                    <button onclick="summarizePDF({{ chapter.id }})" class="btn btn-secondary btn-sm ml-2">Summarize PDF</button>
+                                    <input type="text" id="searchTerm{{ chapter.id }}" placeholder="Enter term to search" class="form-control mt-2 mb-2" style="display: inline-block; width: auto;">
+                                    <button onclick="searchPDF({{ chapter.id }})" class="btn btn-info btn-sm">Search Term</button>
+                                {% endif %}
+                            </p>
+                        {% endif %}
+
+                        <!-- Show Update and Delete buttons only for Ensignat role -->
+                        {% if user.is_authenticated and user.role == 'Enseignant' %}
+                            <div class="d-flex justify-content-start mt-2"  style="right: 0;bottom: 0;position: absolute;">
+                                <form action="{% url 'chapitres_delete' chapter.id %}" method="POST" class="me-2" >
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fa-regular fa-trash-can"></i> Delete
+                                    </button>
+                                </form>
+                            </div>  
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No chapters available for this course.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Modal for displaying summary -->
+    <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="summaryModalLabel">PDF Summary</h5>
+                </div>
+                <div class="modal-body">
+                    <!-- Summary content will be injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="openInNewTab()">Open in New Tab</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<script>
+    function toggleView(chapterId, isViewed) {
+        // AJAX request to update the viewChapitre status
+        $.ajax({
+            url: "{% url 'toggle_view_chapitre' %}",  // Update this to your view URL
+            type: "POST",
+            data: {
+                'chapter_id': chapterId,
+                'viewed': isViewed,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'  // Ensure CSRF token is sent
+            },
+            success: function(response) {
+                // Optionally update the UI based on the response
+                location.reload(); // Reload to reflect the changes
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.error("Error updating view status: ", textStatus, errorThrown);
+            }
+        });
+    }
+
+    function summarizePDF(chapterId) {
+        $.ajax({
+            url: "{% url 'summarize_pdf' 0 %}".replace("0", chapterId),
+            type: "GET",
+            success: function(response) {
+                // Populate the modal with the summary
+                $('#summaryModal').find('.modal-body').html(`<p>${response.summary}</p>`);
+                // Show the modal
+                $('#summaryModal').modal('show');
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.error("Error summarizing PDF: ", textStatus, errorThrown);
+                alert("There was an error creating the summary. Please try again.");
+            }
+        });
+    }
+
+    function searchPDF(chapterId) {
+        const searchTerm = document.getElementById(`searchTerm${chapterId}`).value;
+        if (!searchTerm) {
+            alert("Please enter a term to search.");
+            return;
+        }
+        $.ajax({
+            url: "{% url 'summarize_pdf' 0 %}".replace("0", chapterId),
+            type: "GET",
+            data: { search_term: searchTerm },
+            success: function(response) {
+                if (response.term) {
+                    let content = `<p><strong>Occurrences of '${response.term}':</strong></p><ul>`;
+                    content += response.locations.map(loc => `<li>${loc}</li>`).join('');
+                    content += `</ul><p><strong>Explanation:</strong> ${response.explanation}</p>`;
+                    $('#summaryModal').find('.modal-body').html(content);
+                    $('#summaryModal').modal('show');
+                } else {
+                    $('#summaryModal').find('.modal-body').html("<p>No occurrences found.</p>");
+                    $('#summaryModal').modal('show');
+                }
+            },
+            error: function() {
+                alert("There was an error searching the PDF. Please try again.");
+            }
+        });
+    }
+
+    function openInNewTab() {
+        const summaryContent = $('#summaryModal').find('.modal-body').html();
+        
+        // Open a new blank tab
+        const newTab = window.open();
+        
+        // Write the summary content into the new tab
+        newTab.document.write(`
+            <html>
+                <head>
+                    <title>PDF Summary</title>
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                </head>
+                <body>
+                    <div class="container mt-4">
+                        <h3>PDF Summary</h3>
+                        <div>${summaryContent}</div>
+                    </div>
+                </body>
+            </html>
+        `);
+        
+        // Close the document to load the content properly
+        newTab.document.close();
+    }
+    
+    
+    
+</script>
+<style></style>
+{% endblock %}

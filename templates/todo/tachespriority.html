@@ -1,0 +1,76 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Liste de Tâches Organisée par Priorité</h2>
+    <div class="row">
+      {% for task in page_obj %}
+        <div class="col-md-6 mb-4">
+          <div class="card task-card shadow-sm border-0">
+            <div class="card-body">
+              <!-- Numéro rond pour chaque tâche -->
+              <span class="btn btn-primary task-number mb-3 ">{{ forloop.counter }}</span>
+              
+              <!-- Titre de la tâche -->
+              <h5 class="card-title">Titre : {{ task.title }}</h5>
+              
+              <!-- Description de la tâche -->
+              <p class="card-text">Description : {{ task.description }}</p>
+              
+              <!-- Date limite -->
+              <p class="text-muted">Date limite : {{ task.due_date }}</p>
+              
+              <!-- Justification avec un badge coloré -->
+              <p>Justification : <strong style="color:green"> {{ task.justification }}</strong></p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <a href="{% url 'user_todo_list' %}" class="btn btn-primary mb-4"><i class="fas fa-brain"></i>Retour</a>
+
+  </div>
+{% endblock %}
+
+<style>
+  /* Style personnalisé pour la carte des tâches */
+  .task-card {
+    border-left: 4px solid #007bff;
+    border-radius: 10px;
+  }
+
+  /* Style pour le numéro rond */
+  .task-number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+
+  /* Style de la couleur du badge selon la priorité */
+  .badge-danger {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .badge-warning {
+    background-color: #ffc107;
+    color: black;
+  }
+
+  .badge-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  /* Style du titre centré */
+  h2 {
+    color: #343a40;
+  }
+</style>

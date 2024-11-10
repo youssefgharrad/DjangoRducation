@@ -1,0 +1,192 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <style>
+    .custom-btn {
+      width: 35px;
+      height: 35px;
+      padding: 5px;
+      font-size: 0.8rem;
+      color: white;
+    }
+    
+    /* Custom modal styling */
+    .modal-header {
+      background-color: #1f2937;
+      color: white;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+
+  <script>
+    setTimeout(function () {
+      const alert = document.querySelector('.alert')
+      if (alert) {
+        alert.style.display = 'none'
+      }
+    }, 6000)
+  </script>
+
+  {% if not page_obj %}
+  <a href="{% url 'create_task' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Ajouter une Nouvelle Tâche</a>
+  {% endif %}
+
+  {% if page_obj %}
+    <div class="container mt-5 mb-3">
+      <!-- Card for task list -->
+      <div class="card">
+        <div class="card-header bg-primary text-white text-center">
+          <h2>Liste des Tâches</h2>
+        </div>
+        <div class="card-body">
+          <div class="task-list-header mb-4">
+            <a href="{% url 'create_task' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Ajouter une Nouvelle Tâche</a>
+            <a href="{% url 'download_tasks_pdf' %}" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> Télécharger en PDF</a>
+            <a href="{% url 'Organized_tache' %}" class="btn btn-info"><i class="fas fa-brain"></i> Priorité IA</a>
+          </div>
+
+          <!-- Champ de recherche -->
+          <input type="text" id="search-input" class="form-control mb-4" placeholder="Rechercher une tâche par titre ou description..." />
+
+          {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-info">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      
+
+          <div class="row" id="task-list">
+            {% for todo in page_obj %}
+              <div class="col-md-6 mb-4 task-item" data-title="{{ todo.title|lower }}" data-description="{{ todo.description|lower }}">
+                <div class="card shadow-sm">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h5 class="card-title mb-0">{{ todo.title }}</h5>
+                      <a href="#" class="text-decoration-underline ms-2" data-bs-toggle="modal" data-bs-target="#detailsModal{{ todo.id }}" data-title="{{ todo.title }}" data-description="{{ todo.description }}" data-due-date="{{ todo.due_date }}" data-status="{{ todo.status }}">Détails</a>
+                    </div>
+
+                    <p class="card-text">
+                      <strong>Description:</strong> {{ todo.description|truncatewords:5 }}
+                    </p>
+                    <p class="card-text">
+                      <strong>Date Limite:</strong> {{ todo.due_date|date:'d/m/Y' }}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <p class="card-text mb-0">
+                        <strong>Statut:</strong>
+                        {% if todo.status == 'pending' %}
+                          <span class="badge bg-warning text-dark">En Attente</span>
+                        {% elif todo.status == 'completed' %}
+                          <span class="badge bg-success">Terminé</span>
+                        {% elif todo.status == 'overdue' %}
+                          <span class="badge bg-danger">En Retard</span>
+                        {% endif %}
+                      </p>
+                      <div class="d-flex">
+                        {% if todo.status != 'completed' %}
+                          <form action="{% url 'complete_task' todo.id %}" method="post" class="me-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm custom-btn" title="Compléter la tâche"><i class="bi bi-check-lg"></i></button>
+                          </form>
+                        {% endif %}
+                        <a href="{% url 'update_task' todo.id %}" class="btn btn-success me-2 btn-sm custom-btn"><i class="bi bi-pencil"></i></a>
+                        <form action="{% url 'delete_task' todo.id %}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger btn-sm custom-btn"><i class="bi bi-trash"></i></button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal for Task Details -->
+              <div class="modal fade" id="detailsModal{{ todo.id }}" tabindex="-1" aria-labelledby="detailsModalLabel{{ todo.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" style="color:white" id="detailsModalLabel{{ todo.id }}">{{ todo.title }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>
+                        <strong>Description:</strong> {{ todo.description }}
+                      </p>
+                      <p>
+                        <strong>Date Limite:</strong> {{ todo.due_date|date:'d/m/Y' }}
+                      </p>
+                      <p>
+                        <strong>Statut:</strong>
+                        {% if todo.status == 'pending' %}
+                          <span class="badge bg-warning text-dark">En Attente</span>
+                        {% elif todo.status == 'completed' %}
+                          <span class="badge bg-success">Terminé</span>
+                        {% elif todo.status == 'overdue' %}
+                          <span class="badge bg-danger">En Retard</span>
+                        {% endif %}
+                      </p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="Première"><span aria-hidden="true">&laquo;&laquo;</span></a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Précédente"><span aria-hidden="true">&laquo;</span></a>
+                  </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                  <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                  </li>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Suivante"><span aria-hidden="true">&raquo;</span></a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Dernière"><span aria-hidden="true">&raquo;&raquo;</span></a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info" role="alert">Vous n'avez pas encore de tâches.</div>
+  {% endif %}
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#search-input').on('keyup', function () {
+        const query = $(this).val().toLowerCase()
+    
+        $('.task-item').each(function () {
+          const title = $(this).data('title')
+          const description = $(this).data('description')
+    
+          if (title.includes(query) || description.includes(query)) {
+            $(this).show()
+          } else {
+            $(this).hide()
+          }
+        })
+      })
+    })
+  </script>
+{% endblock %}

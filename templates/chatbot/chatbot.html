@@ -1,0 +1,317 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <head>
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}" />
+  </head>
+
+      <!-- Welcome Section in a Card -->
+    <!-- Welcome Section in a Card -->
+    <section class="welcome-section text-center mt-3 pb-5">
+      <div class="card shadow-lg border-0" style="max-width: 1400px; margin: auto;">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Bienvenue sur notre chatbot éducatif 🎓</h2>
+        </div>
+        <div class="card-body p-4">
+          <img src="{% get_media_prefix %}chatbot/images/chatbot_I.jpg" alt="Chatbot LMS" class="img-fluid rounded mb-3" style="max-width: 100%; height: auto;" />
+
+          {% if user.is_authenticated and user.role == 'Etudiant' %}
+            <div class="card my-4">
+              <div class="card-body">
+                <p class="welcome-text">
+                  <span class="badge bg-info text-dark">NB</span> Les questions concernant la plateforme doivent être formulées de manière précise pour que le chatbot puisse répondre correctement.
+                </p>
+              </div>
+            </div>
+          {% endif %}
+
+          <ul class="welcome-features list-unstyled">
+            {% if user.is_authenticated and user.role == 'Etudiant' %}
+              <li class="mb-2">
+                <span class="text-primary fw-bold">📝</span> Questionner sur les cours disponibles dans notre plateforme
+                <a href="#" class="text-primary text-decoration-underline" data-bs-toggle="modal" data-bs-target="#exampleModal">voici des exemples</a>
+              </li>
+              <li class="mb-2">
+                <span class="text-primary fw-bold">📚</span> Recevoir des informations sur les quiz disponibles pour chaque cours
+                <a href="#" class="text-primary text-decoration-underline" data-bs-toggle="modal" data-bs-target="#exampleModal2">voici des exemples</a>
+              </li>
+            {% endif %}
+
+            <li class="mb-2">
+              <span class="text-primary fw-bold">🤖</span> Chatbot intelligent qui répond à vos problèmes si vous avez des questions concernant la logique.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+<!-- Modal for displaying example questions -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Exemples de questions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li>cours disponible ?</li>
+          <li>quels sont les cours disponibles ?</li>
+          <li>quels cours proposez-vous ?</li>
+          <li>pouvez-vous m'indiquer les cours disponibles ?</li>
+          <li>avez-vous des cours ?</li>
+          <li>quels sont les cours existants ?</li>
+          <li>quels types de cours sont proposés ?</li>
+          <li>quelle formation est disponible ?</li>
+          <li>quels modules sont disponibles ?</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal for displaying example quiz questions -->
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Exemples de questions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li>quiz pour chaque cours</li>
+          <li>pouvez-vous me donner les quiz pour chaque cours ?</li>
+          <li>quels sont les quiz disponibles pour les cours ?</li>
+          <li>y a-t-il des quiz pour chaque cours ?</li>
+          <li>donnez-moi les quiz associés aux cours</li>
+          <li>quiz disponibles pour les cours ?</li>
+          <li>y a-t-il un quiz pour chaque cours ?</li>
+          <li>pouvez-vous lister les quiz pour les différents cours ?</li>
+          <li>quels cours ont des quiz disponibles ?</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <main class="chat-container minimized" id="chatbox">
+    <header>
+      <div class="card flex-grow-1">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span>Education Chatbot</span>
+          <div>
+            <!-- Maximize Button -->
+            <button class="maximize-chat-btn" id="maximizeBtn" onclick="toggleMaximize()">☐</button>
+            <!-- Close Button -->
+            <button class="close-chat-btn" onclick="closeChat()">X</button>
+          </div>
+        </div>
+        {% comment %} {% if user.is_authenticated %}
+          <div class="card-header bg-primary text-white">
+            <b>Welcome, {{ user.username }}</b>
+            <a class="logout" href="{% url 'logout' %}">Logout</a>
+          </div>
+        {% else %}
+          <div class="card-header bg-primary text-white">
+            <a class="login" href="{% url 'login' %}">Login</a>
+            <a class="register" href="{% url 'register' %}">Register</a>
+          </div>
+        {% endif %} {% endcomment %}
+      </div>
+    </header>
+
+    <div class="card-body messages-box">
+      <ul class="list-unstyled messages-list">
+        {% if chats %}
+          {% for chat in chats %}
+            <li class="message {% if chat.user == request.user %}
+                
+                
+                
+                
+                
+                
+                
+                
+                sent
+
+
+
+
+
+
+
+
+              {% else %}
+                
+                
+                
+                
+                
+                
+                
+                
+                received
+
+
+
+
+
+
+
+
+              {% endif %}">
+              <div class="message-text">
+                <div class="message-sender">
+                  <b>
+                    {% if chat.user == request.user %}
+                      You
+                    {% else %}
+                      AI Chatbot
+                    {% endif %}
+                  </b>
+                </div>
+                <div class="message-content">
+                  {% if chat.user == request.user %}
+                    {{ chat.message }}
+                  {% else %}
+                    {{ chat.response }}
+                  {% endif %}
+                </div>
+              </div>
+            </li>
+          {% endfor %}
+        {% else %}
+          <li class="message received">
+            <div class="message-text">
+              <div class="message-content" style="text-align:center; color:gray;">Commencer à discuter</div>
+            </div>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <!-- Typing animation -->
+    <div class="typing-indicator" id="typingIndicator" style="display:none;">
+      <div class="message received">
+        <div class="message-text">
+          <div class="message-sender">
+            <b>AI Chatbot</b>
+          </div>
+          <div class="message-content">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form method="POST" class="message-form">
+      {% csrf_token %}
+      <div class="input-group">
+        <input type="text" class="form-control message-input" name="message" placeholder="Type your message..." required />
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-primary btn-send">Send</button>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <!-- Floating Action Button -->
+  <button style="  background-color: #1F2937;
+" class="fab" onclick="toggleChat()">💬</button>
+  <script>
+    // Function to toggle between normal and fullscreen mode
+    function toggleMaximize() {
+      const chatbox = document.getElementById('chatbox')
+      const maximizeBtn = document.getElementById('maximizeBtn')
+    
+      // Toggle full-screen class
+      chatbox.classList.toggle('fullscreen')
+    
+      // Change button icon depending on the state
+      if (chatbox.classList.contains('fullscreen')) {
+        maximizeBtn.textContent = '❒' // Change to 'restore' icon
+      } else {
+        maximizeBtn.textContent = '☐' // Back to 'maximize' icon
+      }
+    }
+    
+    function closeChat() {
+      chatbox.classList.add('minimized') // Minimize the chatbox
+      fab.style.display = 'flex' // Show the floating button again
+    }
+    
+    const chatbox = document.getElementById('chatbox')
+    const fab = document.querySelector('.fab')
+    
+    function toggleMinimize() {
+      chatbox.classList.toggle('minimized')
+    }
+    
+    function toggleChat() {
+      if (chatbox.classList.contains('minimized')) {
+        chatbox.classList.remove('minimized')
+        fab.style.display = 'none' // Hide the floating button when chatbox is open
+      } else {
+        chatbox.classList.add('minimized')
+        fab.style.display = 'flex' // Show the floating button when chatbox is minimized
+      }
+    }
+    
+    const messagesList = document.querySelector('.messages-list')
+    const messageForm = document.querySelector('.message-form')
+    const messageInput = document.querySelector('.message-input')
+    const typingIndicator = document.getElementById('typingIndicator')
+    
+    messageForm.addEventListener('submit', async (event) => {
+      event.preventDefault()
+    
+      const message = messageInput.value.trim()
+      if (!message) return
+    
+      const messageItem = document.createElement('li')
+      messageItem.classList.add('message', 'sent')
+      messageItem.innerHTML = `<div class="message-text"><div class="message-sender"><b>You</b></div><div class="message-content">${message}</div></div>`
+      messagesList.appendChild(messageItem)
+      messageInput.value = ''
+    
+      typingIndicator.style.display = 'block' // Show typing animation
+    
+      try {
+        const response = await fetch('', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            csrfmiddlewaretoken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+            message: message
+          })
+        })
+        const data = await response.json()
+        typingIndicator.style.display = 'none' // Hide typing animation
+    
+        const receivedMessage = document.createElement('li')
+        receivedMessage.classList.add('message', 'received')
+        receivedMessage.innerHTML = `<div class="message-text"><div class="message-sender"><b>AI Chatbot</b></div><div class="message-content">${data.response}</div></div>`
+        messagesList.appendChild(receivedMessage)
+      } catch (error) {
+        console.error('Error:', error)
+        typingIndicator.style.display = 'none' // Hide typing animation on error
+      }
+    })
+  </script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<body>
+    <h1>Delete Quiz: {{ quiz.title }}</h1>
+    <p>Are you sure you want to delete this quiz?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-behance">Confirm Delete</button>
+    </form>
+    <a href="{% url 'quiz_list' %}">Cancel</a>
+</body>
+</html>
+
+{% endblock %}

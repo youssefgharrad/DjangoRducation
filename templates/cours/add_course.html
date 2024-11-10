@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Ajouter Cours{% endblock %}
+
+{% block content %}
+
+
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-8 col-xl-6">
+                <div class="card rounded-3">
+                    <div class="card-body p-4 p-md-5">
+                        {% if success %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                        {% elif error %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+
+                        <form action="{% url 'courses_add' %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group mb-3">
+                                {{ form.title.label_tag }}
+                                {{ form.title }}
+                            </div>
+                            <div class="form-group mb-3">
+                                {{ form.description.label_tag }}
+                                {{ form.description }}
+                            </div>
+                            <div class="form-group mb-3">
+                                {{ form.specialites.label_tag }}
+                                {{ form.specialites }}
+                            </div>
+                            <div class="form-group mb-3">
+                                {{ form.niveau.label_tag }}
+                                {{ form.niveau }}
+                            </div>
+
+                                <div class="text-center mb-4">
+                                    {% if course.image %}
+                                    <img src="{{ course.image.url }}" alt="image" width="300" height="200">
+                                    {% else %}
+                                    <img src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-login-form/draw2.png" alt="Avatar" class="rounded-circle border border-secondary" width="150" height="150">
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group">
+                                {{ form.image.label_tag }}
+                                {{ form.image }}
+                            </div>
+
+                            <div class="text-center" style="right: 0;bottom: 0;position: absolute;">
+                                <button type="submit" class="btn btn-success" >Ajouter cours</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

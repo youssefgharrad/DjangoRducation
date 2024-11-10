@@ -1,0 +1,80 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="course-list-container" style="margin-top: 30px;">
+    <!-- Header section with buttons -->
+    <div class="header-buttons d-flex justify-content-between align-items-center mb-4">
+        <button disabled style=" background: transparent;
+    border: none !important;">
+
+        </button>
+        <h3>Liste des Cours</h3>
+        {% if user.is_authenticated and user.role == 'Enseignant' %}
+        <button style="background-color: #e52753; transition: background-color 0.3s ease; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem;">
+            <a href="{% url 'courses_add' %}" style="color: white; text-decoration: none;">
+                <i class="fa-regular fa-plus"></i> Ajouter cours
+            </a> 
+        </button>
+        {% else %}
+        <button disabled style=" background: transparent;
+        border: none !important;">
+            
+        </button>
+        {% endif %}
+    </div>
+
+
+    <!-- Grid for course cards -->
+    <div class="row">
+        {% if courses %}
+
+        {% for course in courses %}
+        <div class="col-md-2 mb-4">
+            <a href="{% url 'courses_selectionner' course.id %}">
+            <div class="card h-100 position-relative">
+                {% if course.image %}
+                <img class="card-img-top" src="{{ course.image.url }}" style="width:400px;height: 200px" alt="Course Image">
+                {% else %}
+                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-login-form/draw2.png" alt="Default Image">
+                {% endif %}
+
+                <a href="{% url 'participer_cours' course.id %}" class="btn btn-primary btn-sm position-absolute" style="top: 10px; left: 10px; color: white;">Participer</a>
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.specialites }}</p>
+                    <p class="card-text"><strong>Niveau:</strong> {{ course.niveau }}</p>
+                </div>
+                
+                    <div class="card-footer text-muted">
+                        <div class="d-flex justify-content-between">
+                            {% if user.is_authenticated and user.role == 'Enseignant' %}
+                            <a href="{% url 'courses_update' course.id %}" class="btn btn-warning btn-sm" style="color: white;">Update</a>
+                            <form action="{% url 'courses_delete' course.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                            {% endif %}
+                            {% if user.is_authenticated and user.role == 'Etudiant' %}
+                                <a href="{% url 'generate_quiz' course.id %}" class="btn btn-outline-info btn-sm" >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gem" viewBox="0 0 16 16">
+                                        <path d="M3.5 0a.5.5 0 0 1 .4.2L8 4.5l4.1-4.3a.5.5 0 0 1 .9.3v11a.5.5 0 0 1-.2.4L8 16l-4.9-4.6a.5.5 0 0 1-.2-.4V.5a.5.5 0 0 1 .5-.5z"/>
+                                    </svg>
+                                    AI
+                                </a>  
+                            {% endif %}                      
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+        {% endfor %}
+            {% else %}
+            <p>Aucun cours disponible.</p>
+        {% endif %}
+    </div>
+
+
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}

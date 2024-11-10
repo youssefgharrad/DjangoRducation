@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<div class="container m-5">
+    <h1>{{ quiz_form.instance.pk|yesno:"Edit Quiz,Create Quiz" }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ quiz_form.as_p }}
+        <label for="total_questions">Total Questions</label>
+        <select id="total_questions" name="total_questions" class="form-control" required>
+            <option value="0">Select number of questions</option>
+            {% for i in "12345678910" %}
+            <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+        <div id="questions-container"></div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'quiz_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script>
+document.getElementById('total_questions').addEventListener('change', function() {
+    const numQuestions = parseInt(this.value);
+    const questionsContainer = document.getElementById('questions-container');
+    questionsContainer.innerHTML = '';
+
+    for (let i = 0; i < numQuestions; i++) {
+        const questionHTML = `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>Question ${i + 1}</h5>
+                    <input type="text" name="question_${i}-question_text" class="form-control" placeholder="Question text" required>
+                    <input type="text" name="question_${i}-question_type" class="form-control" placeholder="Question type" required>
+                    <input type="number" name="question_${i}-points" class="form-control" placeholder="Points" required>
+                    
+                    <h6>Choices</h6>
+                    <div class="choices-container" id="choices-container-${i}">
+                        <div class="form-group">
+                            <input type="text" name="choice_${i}_1-choice_text" class="form-control mb-2" placeholder="Choice 1" required>
+                            <label><input type="radio" name="correct_choice_${i}" value="choice_${i}_1"> Correct Choice</label>
+                        </div>
+                        <button type="button" class="btn btn-secondary add-choice" data-question-id="${i}">Add Choice</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+    }
+});
+
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('add-choice')) {
+        const questionId = event.target.getAttribute('data-question-id');
+        const choicesContainer = document.getElementById(`choices-container-${questionId}`);
+        const choiceCount = choicesContainer.getElementsByTagName('input').length / 2;
+
+        const choiceHTML = `
+            <div class="form-group">
+                <input type="text" name="choice_${questionId}_${choiceCount + 1}-choice_text" class="form-control mb-2" placeholder="Choice ${choiceCount + 1}" required>
+                <label><input type="radio" name="correct_choice_${questionId}" value="choice_${questionId}_${choiceCount + 1}"> Correct Choice</label>
+            </div>
+        `;
+        choicesContainer.insertAdjacentHTML('beforeend', choiceHTML);
+    }
+});
+</script>
+{% endblock %}
